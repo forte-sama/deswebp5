@@ -1,0 +1,16 @@
+body {
+    background-color: #315d82;
+    margin-top: 100px;
+}
+
+textarea {
+    resize: none;
+}
+
+a {
+    color: #101010;
+}
+
+a:hover {
+    text-decoration: none;
+}
