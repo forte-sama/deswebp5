@@ -1,4 +1,4 @@
-package wrappers;
+package wrappers.session;
 
 import models.Articulo;
 import models.Comentario;
@@ -6,7 +6,7 @@ import models.Usuario;
 import spark.Request;
 import spark.Session;
 
-import static wrappers.AccessTypes.LOGGED_IN_ONLY;
+import static wrappers.session.AccessTypes.LOGGED_IN_ONLY;
 
 /**
  * Created by forte on 01/06/16.

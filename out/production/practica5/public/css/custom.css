@@ -14,11 +14,3 @@ a {
 a:hover {
     text-decoration: none;
 }
-
-ul.chat_heads {
-    list-style: none;
-}
-
-a.chat_head {
-    text-decoration: none;
-}

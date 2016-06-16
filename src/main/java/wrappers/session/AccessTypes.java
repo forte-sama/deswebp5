@@ -1,4 +1,4 @@
-package wrappers;
+package wrappers.session;
 
 /**
  * Created by forte on 01/06/16.

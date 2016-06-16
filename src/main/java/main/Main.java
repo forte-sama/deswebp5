@@ -7,8 +7,11 @@ import models.Etiqueta;
 import models.Usuario;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
-import wrappers.*;
+import wrappers.session.AccessTypes;
+import wrappers.session.Filtros;
+import wrappers.session.Sesion;
 import wrappers.db.*;
+import wrappers.realtime.WebSocketHandler;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -19,6 +22,9 @@ import static spark.debug.DebugScreen.enableDebugScreen;
 
 public class Main {
     public static void main(String[] args) {
+
+        //indicar gestor de websockets
+        webSocket("/forte", WebSocketHandler.class);
 
         //indicar ruta de archivos publicos.
         staticFileLocation("/public");
@@ -38,8 +44,16 @@ public class Main {
         //crear usuario por default si no se ha creado ya
         GestorUsuarios.getInstance().editar(new Usuario("admin","admin","admin",true,true));
 
-        System.out.println();
         //Rutas
+        get("/chat", (request, response) -> {
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("action","chat");
+            data.put("loggedIn", Sesion.isLoggedIn(request));
+            data.put("active_user",Sesion.getUsuarioActivo(request));
+
+            return new ModelAndView(data,"chat_page.ftl");
+        }, new FreeMarkerEngine(configuration));
+
         get("/", (request, response) -> {
             response.redirect("/page/1");
 
@@ -49,7 +63,7 @@ public class Main {
         get("/page/:pageNumber", (request, response) -> {
             HashMap<String,Object> data = new HashMap<>();
             data.put("action","index");
-            data.put("loggedIn",Sesion.isLoggedIn(request));
+            data.put("loggedIn", Sesion.isLoggedIn(request));
             boolean esAdmin = Sesion.accesoValido(AccessTypes.ADMIN_ONLY,request,null);
             data.put("isAutor",Sesion.getTipoUsuarioActivo(request) == "autor" || esAdmin);
 
@@ -74,7 +88,6 @@ public class Main {
 
             return new ModelAndView(data,"index.ftl");
         }, new FreeMarkerEngine(configuration));
-
 
         get("/tag/:etiqueta/",(request, response) -> {
             String tag = request.params("etiqueta");
@@ -518,6 +531,8 @@ public class Main {
 
 
         get("/logout",(request, response) -> {
+            WebSocketHandler.desconectar(Sesion.getUsuarioActivo(request));
+
             Sesion.cerrar(request);
 
             response.redirect("/");

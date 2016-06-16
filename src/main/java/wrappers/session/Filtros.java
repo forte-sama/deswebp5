@@ -1,19 +1,40 @@
-package wrappers;
+package wrappers.session;
 
 import models.Articulo;
 import models.Usuario;
 import spark.Response;
 
 import static spark.Spark.before;
+import static spark.Spark.webSocket;
+
 import spark.Request;
 import wrappers.db.GestorArticulos;
 import wrappers.db.GestorUsuarios;
+import wrappers.realtime.WebSocketHandler;
 
 /**
  * Created by forte on 01/06/16.
  */
 public class Filtros {
     public static void iniciarFiltros() {
+        before("/chat", (request, response) -> {
+
+            String usuarioChateador = WebSocketHandler.getUsuarioActivo();
+            String usuarioEnSesion = Sesion.getUsuarioActivo(request);
+
+            System.out.println("~" + usuarioChateador + "~ : ~" + usuarioEnSesion + "~");
+
+            //logica de validacion para tener solo un chateador
+            if(!Sesion.isLoggedIn(request) || Sesion.getTipoUsuarioActivo(request) == "lector") {
+                response.redirect("/");
+            }
+            if(usuarioChateador != null) {
+                if(!usuarioChateador.contentEquals(usuarioEnSesion.trim())) {
+                    response.redirect("/");
+                }
+            }
+        });
+
         before("/user/register",(request, response) -> {
             //si la sesion esta activa, redireccionar
             if(Sesion.isLoggedIn(request)) {
@@ -44,10 +65,6 @@ public class Filtros {
                 response.redirect("/");
             }
         });
-//        before("/article/edit/:article_id", (request, response) -> {
-//            //validar por metodo GET el acceso editar el articulo con id=article_id
-//            validarAccesoArticulo(request,response,"get");
-//        });
         before("/article/edit", (request, response) -> {
             //validar por metodo POST el acceso editar el articulo con id=article_id
             validarAccesoArticulo(request,response,"post");
