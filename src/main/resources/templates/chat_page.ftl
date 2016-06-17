@@ -13,7 +13,7 @@
 <#include "nav.ftl">
 <div class="container">
     <div class="row">
-        <div class="col col-md-12">
+        <div class="col col-md-8 col-md-offset-2">
             <div class="well well-lg">
                 <div class="row">
                     <div class=" col-md-12">
@@ -25,36 +25,32 @@
                     </div>
                 </div>
                 <div class="row">
-                    <#--<div class=" col-md-4">-->
-                    <#--&lt;#&ndash; Chat heads &ndash;&gt;-->
-                        <#--<ul role="tablist" class="chat_heads">-->
-                            <#--<li>-->
-                                <#--<a href="#home" class="chat_head" role="tab" data-toggle="tab">Home</a>-->
-                            <#--</li>-->
-                            <#--<li>-->
-                                <#--<a href="#profile" class="chat_head" role="tab" data-toggle="tab">Profile</a>-->
-                            <#--</li>-->
-                            <#--<li>-->
-                                <#--<a href="#messages" class="chat_head" role="tab" data-toggle="tab">Messages</a>-->
-                            <#--</li>-->
-                            <#--<li>-->
-                                <#--<a href="#settings" class="chat_head" role="tab" data-toggle="tab">Settings</a>-->
-                            <#--</li>-->
-                        <#--</ul>-->
-                    <#--</div>-->
-                    <#--<div class="col-md-8">-->
-                        <#--<!-- Chats &ndash;&gt;-->
-                        <#--<div class="tab-content">-->
-                            <#--<div role="tabpanel" class="tab-pane" id="home">tab 1</div>-->
-                            <#--<div role="tabpanel" class="tab-pane" id="profile">tab 2</div>-->
-                            <#--<div role="tabpanel" class="tab-pane" id="messages">tab 3</div>-->
-                            <#--<div role="tabpanel" class="tab-pane" id="settings">tab 4</div>-->
-                        <#--</div>-->
-                    <#--</div>-->
-                    <div class="col col-md-12">
-                        <input type="text" id="target" />
-                        <input type="text" id="new_message_autor" />
-                        <button class="btn btn-success" id="send_message_autor">Enviar Mensaje</button>
+                    <div class=" col-md-4">
+                    <#-- Chat heads -->
+                        <ul role="tablist" id="chat_heads">
+                            <li id="dummy_chat_tab" class="chat_tab hidden">
+                                <span class="label label-default">
+                                    <a href="" class="chat_head" role="tab" data-toggle="tab"></a>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- Chats -->
+                        <div class="row">
+                            <div class="tab-content" id="chat_bodies">
+                                <div role="tabpanel" class="tab-pane hidden" id="dummy_chat_tab_box"></div>
+                            </div>
+                        </div>
+                        <div class="row hidden" id="input_messages">
+                            <div class="col-md-5">
+                                <input type="text" id="new_message_autor" class="" style="width: 100%;"/>
+                                <br>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-success" id="send_message_autor">Enviar Mensaje</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

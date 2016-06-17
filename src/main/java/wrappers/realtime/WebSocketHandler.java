@@ -4,7 +4,6 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -15,7 +14,8 @@ import java.util.HashMap;
 public class WebSocketHandler {
     private static String  usuarioActivo = null;
     private static Session sesionUsuario = null;
-    private static HashMap<String,Session> lectores = new HashMap<>();
+    private static HashMap<String,Session> lectoresSesiones = new HashMap<>();
+    private static HashMap<Session,String> sesionesLectores = new HashMap<>();
 
     @OnWebSocketConnect
     public void conectar(Session usuario) {
@@ -45,15 +45,14 @@ public class WebSocketHandler {
                 conectarAutor(msj[1].trim(),usuario);
                 break;
             case "iniciar_chat_lector":
-                respuesta = "se conecto el lector";
                 conectarLector(msj[1].trim(),usuario);
-                enviarMensaje(usuario,respuesta);
+                enviarMensaje(usuario,"Ya estas conectado.");
                 break;
             case "mensaje_lector":
-                enviarMensaje(sesionUsuario,msj[1].trim());
+                enviarMensajeAdmin(usuario,sesionesLectores.get(usuario) + "~" + msj[1].trim());
                 break;
             case "mensaje_autor":
-                enviarMensaje(lectores.get(msj[1].trim()),msj[2].trim());
+                enviarMensaje(lectoresSesiones.get(msj[1].trim()),msj[2].trim());
                 break;
             case "despedir_lector":
                 respuesta = "se fue un lector";
@@ -64,55 +63,36 @@ public class WebSocketHandler {
                 respuesta = "Tipo de mensaje invalido.. Bai";
                 enviarMensaje(usuario,respuesta);
         }
-
-//        try {
-//            usuario.getRemote().sendString(respuesta);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//        if(mensaje.contains("registrar")) {
-//            if (mensaje.contains("autor")) {
-//                autoresActivos.put(mensaje.split(" ")[2], usuario);
-//            } else if (mensaje.contains("lector")) {
-//                Session autor = autoresActivos.get(mensaje.split(" ")[2]);
-//                lectoresActivos.put(usuario,autor);
-//            }
-//        }
-//        else {
-//            try {
-//                lectoresActivos.get(usuario).getRemote().sendString(mensaje);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-//        //Enviar un simple mensaje al cliente que mando al servidor..
-//        try {
-//            usuario.getRemote().sendString(li("Cliente, tu mensaje se recibio, me dijiste '" + mensaje + "' ?").render());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     private void conectarLector(String user, Session userSession) {
-        lectores.put(user,userSession);
+        lectoresSesiones.put(user,userSession);
+        sesionesLectores.put(userSession,user);
     }
 
-    public boolean enviarMensaje(Session target, String mensaje) {
-        boolean exito;
-
+    private void enviarMensajeAdmin(Session sesionLector, String mensaje) {
         try {
-            target.getRemote().sendString(mensaje);
-
-            exito = true;
+            if(sesionLector != null) {
+                if(sesionUsuario == null) {
+                    sesionLector.getRemote().sendString("El admin no esta disponible.");
+                }
+                else {
+                    sesionUsuario.getRemote().sendString(mensaje);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
-
-            exito = false;
         }
+    }
 
-        return exito;
+    public void enviarMensaje(Session target, String mensaje) {
+        try {
+            if(target != null) {
+                target.getRemote().sendString(mensaje);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getUsuarioActivo() {
@@ -125,9 +105,11 @@ public class WebSocketHandler {
     }
 
     public static void desconectar(String user) {
-        if(user.contentEquals(usuarioActivo)) {
-            usuarioActivo = null;
-            sesionUsuario = null;
+        if(user != null && usuarioActivo != null) {
+            if (user.contentEquals(usuarioActivo)) {
+                usuarioActivo = null;
+                sesionUsuario = null;
+            }
         }
     }
 }

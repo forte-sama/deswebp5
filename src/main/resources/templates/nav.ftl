@@ -13,7 +13,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-left">
                 <li <#if action == "index">class="active"</#if>><a href="/">Home</a></li>
-                <#if action != "chat">
+                <#if (action == "index" || action == "view_article") && action != "chat">
+                <#--<#include "chat_box.ftl">-->
                 <script type="text/javascript" src="/js/chat_user.js"></script>
                 <li class="bg-primary"><a id="chat_init" href="" data-toggle="modal" data-target="#chat_box">Contactar</a></li>
                 </#if>
@@ -51,16 +52,39 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Chateo con el Chateador</h4>
+                <input type="text" id="chat_user" />
+                <button class="btn btn-warning" id="connect_as">Conectar</button>
             </div>
-            <div class="modal-body">
-                <input type="text" id="new_message" />
+            <div id="chat_box_body" class="modal-body">
+                <#-- Aqui se va a almacenar cada mensaje -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button class="btn btn-warning" id="connect_as">Conectar</button>
-                <button class="btn btn-success" id="send_message">Enviar Mensaje</button>
+                <div class="row">
+                    <div class="col-md-9">
+                        <input type="text" id="new_message" class="" style="width: 100%;"/>
+                        <br>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-success" id="send_message">Enviar Mensaje</button>
+                    </div>
+                </div>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div id="dummy_mensaje_admin" class="row hidden">
+    <div class="col col-md-6 pull-left">
+        <h3 class="pull-left">
+            <span class="label label-primary cuerpo">
+            </span>
+        </h3>
+    </div>
+</div>
+<div id="dummy_mensaje_lector" class="row hidden">
+    <div class="col col-md-6 pull-right">
+        <h3 class="pull-right">
+            <span class="label label-default cuerpo">
+            </span>
+        </h3>
+    </div>
+</div>

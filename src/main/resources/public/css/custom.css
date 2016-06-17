@@ -15,10 +15,16 @@ a:hover {
     text-decoration: none;
 }
 
-ul.chat_heads {
+ul#chat_heads {
     list-style: none;
 }
 
 a.chat_head {
     text-decoration: none;
+}
+
+#chat_box_body {
+    height: 300px;
+    max-height: 300px;
+    overflow: scroll;
 }
